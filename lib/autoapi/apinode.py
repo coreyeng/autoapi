@@ -76,7 +76,7 @@ from pkgutil import iter_modules
 from traceback import format_exc
 from importlib import import_module
 from collections import OrderedDict
-from inspect import isclass, isfunction
+from inspect import isclass, isfunction, ismodule, isbuiltin
 
 
 log = getLogger(__name__)
@@ -121,10 +121,19 @@ class APINode(object):
     In all categories the order on which the elements are listed is preserved.
     """
 
-    def __init__(self, name, directory=None):
-        self.module = import_module(name)
+    def __init__(self, name, directory=None, *, prebuilt=False):
         self.name = name
+        if prebuilt:
+            root_name = name.split('.')[0]
+            root_mod = import_module(root_name)
+            _root_mod = root_mod
+            for mod in name.split('.')[1:]:
+                _root_mod = getattr(_root_mod, mod)
+            self.module = _root_mod
+        else:
+            self.module = import_module(name)
         self.subname = name.split('.')[-1]
+        self.prebuilt = prebuilt or self.is_prebuilt()
 
         self.functions = OrderedDict()
         self.classes = OrderedDict()
@@ -152,7 +161,7 @@ class APINode(object):
 
         # Check if package and iterate over subnodes
         if hasattr(self.module, '__path__'):
-            for _, subname, ispkg in iter_modules(
+            for _, subname, _ in iter_modules(
                     self.module.__path__, self.module.__name__ + '.'):
                 log.info('Recursing into {}'.format(subname))
 
@@ -163,6 +172,27 @@ class APINode(object):
                     log.error('Failed to import {}'.format(subname))
                     log.error(format_exc())
                     self.subnodes_failed.append(subname)
+        elif self.is_prebuilt() or prebuilt:
+            log.info(f'Building API for prebuilt {self.module.__name__}')
+
+            for public_key in ['__all__', '__api__']:
+                if not hasattr(self.module, public_key):
+                    continue
+
+                for subname in getattr(self.module, public_key):
+                    if not hasattr(self.module, subname):
+                        log.warning('Module {} doesn\'t have a element {}'.format(self.name, subname))
+                        continue
+                    elif ismodule(getattr(self.module, subname)):
+                        submod = getattr(self.module, subname)
+                        try:
+                            mod_name = f'{self.name}.{submod.__name__}'
+                            subnode = APINode(mod_name, self.directory, prebuilt=True)
+                            self.subnodes.append(subnode)
+                        except Exception:
+                            log.error('Failed to import {}'.format(subname))
+                            log.error(format_exc())
+                            self.subnodes_failed.append(subname)
 
         # Fetch all public objects
         public = OrderedDict()
@@ -191,6 +221,8 @@ class APINode(object):
                 continue
             if isfunction(obj):
                 self.functions[obj_name] = obj
+                continue
+            if isbuiltin(obj) or ismodule(obj):
                 continue
             self.variables[obj_name] = obj
 
@@ -293,8 +325,10 @@ class APINode(object):
             for step in subnode.walk():
                 yield step
 
+    # pylint: disable=non-iterator-returned
     def __iter__(self):
         return self.walk
+    # pylint: enable=non-iterator-returned
 
     def tree(self, level=0, fullname=True):
         """
@@ -338,6 +372,13 @@ class APINode(object):
         for subnode in self.subnodes:
             output.append(subnode.tree(level=level + 1, fullname=fullname))
         return '\n'.join(output)
+
+    def is_prebuilt(self):
+        if hasattr(self.module, '__file__'):
+            f = getattr(self.module, '__file__')
+            if f.endswith('.pyd') or f.endswith('.so'):
+                return True
+        return False
 
     def __str__(self):
         return self.tree()

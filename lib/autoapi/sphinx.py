@@ -19,6 +19,7 @@
 Glue for Sphinx API.
 """
 
+from pathlib import Path
 from inspect import getdoc
 from functools import wraps
 from traceback import format_exc
@@ -122,7 +123,8 @@ def builder_inited(app):
             'prune': False,
             'override': True,
             'template': 'module',
-            'output': module
+            'output': module,
+            'orphan': False
         }
         if overrides:
             options.update(overrides)
@@ -148,7 +150,10 @@ def builder_inited(app):
             continue
 
         # Define output directory
-        out_dir = join(app.env.srcdir, options['output'])
+        if app.config.autoapi_output_dir:
+            out_dir = join(Path(app.config.autoapi_output_dir), options['output'])
+        else:
+            out_dir = join(app.env.srcdir, options['output'])
         ensuredir(out_dir)
 
         # Iterate nodes and render them
@@ -173,7 +178,8 @@ def builder_inited(app):
                 fd.write(
                     template.render(
                         node=node,
-                        subnodes=subnodes
+                        subnodes=subnodes,
+                        orphan=options['orphan']
                     )
                 )
 
@@ -187,6 +193,7 @@ def setup(app):
     # autodoc is required
     app.setup_extension('sphinx.ext.autodoc')
     app.add_config_value('autoapi_modules', {}, True)
+    app.add_config_value('autoapi_output_dir', None, True)
     app.connect(str('builder-inited'), builder_inited)
     return {'version': __version__}
 

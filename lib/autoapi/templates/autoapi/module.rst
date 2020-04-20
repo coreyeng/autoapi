@@ -1,3 +1,8 @@
+{% if orphan -%}
+:orphan:
+
+{% endif -%}
+
 =={{ '=' * node.name|length }}==
 ``{{ node.name }}``
 =={{ '=' * node.name|length }}==
@@ -57,11 +62,12 @@ Classes
 {% for item in node.classes %}
 .. autoclass:: {{ item }}
    :members:
-
+{% if not node.prebuilt %}
    .. rubric:: Inheritance
    .. inheritance-diagram:: {{ item }}
       :parts: 1
-{##}
+{%- endif -%}
+
 {%- endfor -%}
 {%- endif -%}
 {%- endblock -%}
@@ -102,11 +108,12 @@ Variables
 {% for item, obj in node.variables.items() %}
 .. autodata:: {{ item }}
    :annotation:
-
+{% if not node.prebuilt %}
    .. code-block:: text
 
       {{ obj|pprint|indent(6) }}
-{##}
+{%- endif -%}
+
 {%- endfor -%}
 {%- endif -%}
 {%- endblock -%}
