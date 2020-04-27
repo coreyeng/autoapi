@@ -181,13 +181,22 @@ class APINode(object):
 
                 for subname in getattr(self.module, public_key):
                     if not hasattr(self.module, subname):
-                        log.warning('Module {} doesn\'t have a element {}'.format(self.name, subname))
+                        log.warning(
+                            'Module {} doesn\'t have a element {}'.format(
+                                self.name,
+                                subname
+                            )
+                        )
                         continue
                     elif ismodule(getattr(self.module, subname)):
                         submod = getattr(self.module, subname)
                         try:
                             mod_name = f'{self.name}.{submod.__name__}'
-                            subnode = APINode(mod_name, self.directory, prebuilt=True)
+                            subnode = APINode(
+                                mod_name,
+                                self.directory,
+                                prebuilt=True
+                            )
                             self.subnodes.append(subnode)
                         except Exception:
                             log.error('Failed to import {}'.format(subname))

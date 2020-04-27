@@ -151,7 +151,10 @@ def builder_inited(app):
 
         # Define output directory
         if app.config.autoapi_output_dir:
-            out_dir = join(Path(app.config.autoapi_output_dir), options['output'])
+            out_dir = join(
+                Path(app.config.autoapi_output_dir),
+                options['output']
+            )
         else:
             out_dir = join(app.env.srcdir, options['output'])
         ensuredir(out_dir)
