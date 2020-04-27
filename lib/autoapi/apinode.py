@@ -182,7 +182,7 @@ class APINode(object):
                 for subname in getattr(self.module, public_key):
                     if not hasattr(self.module, subname):
                         log.warning(
-                            'Module {} doesn\'t have a element {}'.format(
+                            "Module {} doesn't have a element {}".format(
                                 self.name,
                                 subname
                             )
