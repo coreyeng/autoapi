@@ -76,11 +76,10 @@ from pkgutil import iter_modules
 from traceback import format_exc
 from importlib import import_module
 from collections import OrderedDict
-from inspect import isclass, isfunction, ismodule, isbuiltin
+from inspect import isclass, isfunction, ismodule, isbuiltin, isroutine, getmembers
 
 
 log = getLogger(__name__)
-
 
 class APINode(object):
     """
@@ -121,8 +120,14 @@ class APINode(object):
     In all categories the order on which the elements are listed is preserved.
     """
 
-    def __init__(self, name, directory=None, *, prebuilt=False):
+    autoapi_process_node_func_name = 'autoapi-process-node'
+
+    def __init__(self, name, directory=None, *, prebuilt=False, context={}):
         self.name = name
+        self.context = context
+        self.opts = {
+            'rst-pre-title': []
+        }
         if prebuilt:
             root_name = name.split('.')[0]
             root_mod = import_module(root_name)
@@ -166,7 +171,11 @@ class APINode(object):
                 log.info('Recursing into {}'.format(subname))
 
                 try:
-                    subnode = APINode(subname, self.directory)
+                    subnode = APINode(
+                        subname,
+                        self.directory,
+                        context=self.context
+                    )
                     self.subnodes.append(subnode)
                 except Exception:
                     log.error('Failed to import {}'.format(subname))
@@ -195,7 +204,8 @@ class APINode(object):
                             subnode = APINode(
                                 mod_name,
                                 self.directory,
-                                prebuilt=True
+                                prebuilt=True,
+                                context=self.context
                             )
                             self.subnodes.append(subnode)
                         except Exception:
@@ -205,40 +215,82 @@ class APINode(object):
 
         # Fetch all public objects
         public = OrderedDict()
-        for public_key in ['__api__', '__all__']:
-            if not hasattr(self.module, public_key):
-                continue
 
-            for obj_name in getattr(self.module, public_key):
-                if not hasattr(self.module, obj_name):
-                    log.warning(
-                        'Module {} doesn\'t have a element {}'.format(
-                            self.name, obj_name
-                        )
-                    )
+        # If the 'class_members' option was given, build the API out of that.
+        # Like autodoc's setting though:
+        #  if the module has a public API, give that priority
+        if (not (
+                hasattr(self.module, '__api__')
+                or hasattr(self.module, '__all__')
+            ) and self.context['module-members']):
+
+            # Start with all members and gradually shrink the set down
+            # with the given options
+            keys = getmembers(self.module)
+            if not 'undoc-members' in self.context['module-members']:
+                # Remove undocumented items
+                keys = self.filter_out_nodoc(keys)
+            if not 'private-members' in self.context['module-members']:
+                # Remove private members
+                # Private members are defined as starting with
+                # '_' or '__', but no trailing '__'
+                keys = self.filter_out_private(keys)
+            if not 'special-members' in self.context['module-members']:
+                # Remove special members.
+                # Special members are defined as starting or ending with, '__'
+                keys = self.filter_out_special(keys)
+            keys = self.filter_out_external(keys)
+            for k in keys:
+                public[k[0]] = k[1]
+        else:
+            for public_key in self.public_keys:
+                if not hasattr(self.module, public_key):
                     continue
-                public[obj_name] = getattr(self.module, obj_name)
-            break
+
+                for obj_name in getattr(self.module, public_key):
+                    if not hasattr(self.module, obj_name):
+                        log.warning(
+                            'Module {} doesn\'t have a element {}'.format(
+                                self.name, obj_name
+                            )
+                        )
+                        continue
+                    public[obj_name] = getattr(self.module, obj_name)
+                break
 
         # Categorize objects
         for obj_name, obj in public.items():
+            if obj_name in context['exclude-members']:
+                continue
+            
             if isclass(obj):
                 if issubclass(obj, Exception):
-                    self.exceptions[obj_name] = obj
+                    self.exceptions[obj_name] = (
+                        obj,
+                        self.default_exception_opts()
+                    )
                     continue
-                self.classes[obj_name] = obj
+                self.classes[obj_name] = (
+                    obj,
+                    self.default_class_opts()
+                )
                 continue
-            if isfunction(obj):
-                self.functions[obj_name] = obj
+            if isfunction(obj) or (isbuiltin(obj) and isroutine(obj)):
+                self.functions[obj_name] = (
+                    obj,
+                    self.default_function_opts()
+                )
                 continue
-            if isbuiltin(obj) or ismodule(obj):
+            if ismodule(obj):
                 continue
-            self.variables[obj_name] = obj
+            self.variables[obj_name] = (obj, self.default_variable_opts())
 
         # Flag to mark if this branch is relevant
         # For self._relevant, None means undertermined
         if self.is_root():
             self.is_relevant()
+        
+        context['app'].emit(self.autoapi_process_node_func_name, self)
 
     def has_public_api(self):
         """
@@ -388,6 +440,67 @@ class APINode(object):
             if f.endswith('.pyd') or f.endswith('.so'):
                 return True
         return False
+
+    def filter_out_nodoc(self, members):
+        return list(filter(
+            lambda m: not hasattr(m[1], '__doc__'),
+            members)
+        )
+    
+    def filter_out_private(self, members):
+        return list(filter(
+            lambda m: (not ((str(m[0]).startswith('__')
+                and not str(m[0]).endswith('__'))
+                or str(m[0]).startswith('_'))
+            ),
+            members)
+        )
+    
+    def filter_out_special(self, members):
+        return list(filter(
+            lambda m: (not (str(m[0]).startswith('__')
+                or str(m[0]).endswith('__'))
+            ),
+            members)
+        )
+
+    def filter_out_external(self, members):
+        return list(filter(
+            lambda m: (hasattr(m[1], '__module__')
+                and m[1].__module__ == self.module.__name__
+            ),
+            members)
+        )
+
+    @property
+    def public_keys(self):
+        return ['__api__', '__all__']
+
+    def default_opts(self):
+        return {
+            'directives': []
+        }
+
+    def default_exception_opts(self):
+        opts = self.default_opts()
+        return opts
+
+    def default_class_opts(self):
+        opts = self.default_opts()
+        if 'class-members' in self.context:
+            opts['directives'] = self.context['class-members']
+        else:
+            opts['directives'].append('members')
+        return opts
+
+    def default_function_opts(self):
+        opts = self.default_opts()
+        return opts
+
+    def default_variable_opts(self):
+        opts = self.default_opts()
+        opts['directives'].append('annotation')
+        return opts
 
     def __str__(self):
         return self.tree()

@@ -1,3 +1,10 @@
+{% if node.opts['rst-pre-title']|length > 0 -%}
+{% for block in node.opts['rst-pre-title'] -%}
+{{ block }}
+
+{%- endfor %}
+{% endif -%}
+
 {% if orphan -%}
 :orphan:
 
@@ -36,7 +43,7 @@ Functions
 
 {% for item, obj in node.functions.items() -%}
 - :py:func:`{{ item }}`:
-  {{ obj|summary }}
+  {{ obj[0]|summary }}
 
 {% endfor -%}
 
@@ -55,13 +62,15 @@ Classes
 
 {% for item, obj in node.classes.items() -%}
 - :py:class:`{{ item }}`:
-  {{ obj|summary }}
+  {{ obj[0]|summary }}
 
 {% endfor -%}
 
-{% for item in node.classes %}
+{% for item, obj in node.classes.items() %}
 .. autoclass:: {{ item }}
-   :members:
+{%- for d in obj[1]['directives'] %}
+   :{{ d }}:
+{%- endfor %}
 {% if not node.prebuilt %}
    .. rubric:: Inheritance
    .. inheritance-diagram:: {{ item }}
@@ -80,7 +89,7 @@ Exceptions
 
 {% for item, obj in node.exceptions.items() -%}
 - :py:exc:`{{ item }}`:
-  {{ obj|summary }}
+  {{ obj[0]|summary }}
 
 {% endfor -%}
 
@@ -107,11 +116,15 @@ Variables
 
 {% for item, obj in node.variables.items() %}
 .. autodata:: {{ item }}
-   :annotation:
+{%- for d in obj[1]['directives'] %}
+   :{{ d }}:
+{%- endfor %}
 {% if not node.prebuilt %}
+{%- if item is upper %}
    .. code-block:: text
 
-      {{ obj|pprint|indent(6) }}
+      {{ obj[0]|pprint|indent(6) }}
+{%- endif -%}
 {%- endif -%}
 
 {%- endfor -%}

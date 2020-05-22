@@ -124,8 +124,12 @@ def builder_inited(app):
             'override': True,
             'template': 'module',
             'output': module,
-            'orphan': False
+            'orphan': False,
+            'module-members': [],
+            'class-members': [],
+            'exclude-members': []
         }
+
         if overrides:
             options.update(overrides)
 
@@ -135,7 +139,15 @@ def builder_inited(app):
         )
 
         # Build API tree
-        tree = APINode(module)
+        tree = APINode(
+            module,
+            context = {
+                'app': app,
+                'module-members': options['module-members'],
+                'class-members': options['class-members'],
+                'exclude-members': options['exclude-members']
+            }
+        )
 
         # Gather nodes to document
         if options['prune']:
@@ -182,7 +194,7 @@ def builder_inited(app):
                     template.render(
                         node=node,
                         subnodes=subnodes,
-                        orphan=options['orphan']
+                        orphan=options['orphan'],
                     )
                 )
 
@@ -197,6 +209,7 @@ def setup(app):
     app.setup_extension('sphinx.ext.autodoc')
     app.add_config_value('autoapi_modules', {}, True)
     app.add_config_value('autoapi_output_dir', None, True)
+    app.add_event(APINode.autoapi_process_node_func_name)
     app.connect(str('builder-inited'), builder_inited)
     return {'version': __version__}
 
