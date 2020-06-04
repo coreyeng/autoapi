@@ -130,6 +130,13 @@ def builder_inited(app):
             'exclude-members': []
         }
 
+        # Unless the user explicitly passed in the option, base the
+        # inheritance-diagram-available option on whether or not the
+        # appropriate extension is available.
+        if 'inheritance-diagram-available' not in options:
+            options['inheritance-diagram-available'] = \
+                'sphinx.ext.inheritance_diagram' in app.extensions
+
         if overrides:
             options.update(overrides)
 
@@ -145,7 +152,8 @@ def builder_inited(app):
                 'app': app,
                 'module-members': options['module-members'],
                 'class-members': options['class-members'],
-                'exclude-members': options['exclude-members']
+                'exclude-members': options['exclude-members'],
+                'inheritance_diagram_available': options['inheritance-diagram-available'],
             }
         )
 

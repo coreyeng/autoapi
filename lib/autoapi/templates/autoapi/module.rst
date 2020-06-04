@@ -71,10 +71,12 @@ Classes
 {%- for d in obj[1]['directives'] %}
    :{{ d }}:
 {%- endfor %}
+{% if inheritance_diagram_available %}
 {% if not node.prebuilt %}
    .. rubric:: Inheritance
    .. inheritance-diagram:: {{ item }}
       :parts: 1
+{%- endif -%}
 {%- endif -%}
 
 {%- endfor -%}
