@@ -153,7 +153,6 @@ def builder_inited(app):
                 'module-members': options['module-members'],
                 'class-members': options['class-members'],
                 'exclude-members': options['exclude-members'],
-                'inheritance_diagram_available': options['inheritance-diagram-available'],
             }
         )
 
@@ -203,6 +202,7 @@ def builder_inited(app):
                         node=node,
                         subnodes=subnodes,
                         orphan=options['orphan'],
+                        inheritance_diagram_available=options['inheritance-diagram-available'],
                     )
                 )
 
