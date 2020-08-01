@@ -98,9 +98,11 @@ Exceptions
 {% for item in node.exceptions %}
 .. autoexception:: {{ item }}
 
+{% if inheritance_diagram_available -%}
    .. rubric:: Inheritance
    .. inheritance-diagram:: {{ item }}
       :parts: 1
+{%- endif -%}
 {##}
 {%- endfor -%}
 {%- endif -%}
