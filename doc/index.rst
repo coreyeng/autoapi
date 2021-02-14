@@ -101,6 +101,18 @@ Usage
             |-- mymodule.rst
             |-- mymodule.submodule.rst
             `-- mymodule.another.rst
+   :orphan: ``bool``
+    Inserts the `orphan <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html#orphan>`_ 
+    directive to all generated contents from this module.
+   :module-members: ``list ['str']``
+    Include additional members to document when generating for a ``module``.
+    Options are ``undoc-members``, ``special-members``, and ``private-members``
+   :class-members: ``list ['str']``
+    Include additional members to document. These are inserted as
+    `directives <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directives>`_
+    into the resulting ``.rst`` for ``classes``.
+   :exclude-members: ``list ['str']``
+    Enumerated members to exclude from resulting ``.rst``.
 
    For example, a custom configuration could be:
 
@@ -112,6 +124,27 @@ Usage
             'output': 'auto'
          }
       }
+
+#. Configure Auxillary AutoAPI Settings
+
+   Other options available in your Sphinx's ``conf.py``:
+
+   .. code-block:: python
+
+      # Output directory to place generated contents.
+      # Can be absolute or relative to your Sphinx's ``conf.py``.
+      autoapi_output_dir = '...'
+
+   AutoAPI also supports a listener to post-process an ``APINode``.
+   Each node will be given to this method in turn:
+
+   .. code-block:: python
+
+      def setup(app):
+         def postprocess_node(app, node):
+            ...
+      
+         app.connect('autoapi-process-node', postprocess_node)
 
 #. Reference your documentation in your Sphinx project:
 

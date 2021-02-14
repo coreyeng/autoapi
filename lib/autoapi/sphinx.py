@@ -148,7 +148,7 @@ def builder_inited(app):
         # Build API tree
         tree = APINode(
             module,
-            context = {
+            context={
                 'app': app,
                 'module-members': options['module-members'],
                 'class-members': options['class-members'],
@@ -202,7 +202,8 @@ def builder_inited(app):
                         node=node,
                         subnodes=subnodes,
                         orphan=options['orphan'],
-                        inheritance_diagram_available=options['inheritance-diagram-available'],
+                        inheritance_diagram_available=options[
+                            'inheritance-diagram-available'],
                     )
                 )
 

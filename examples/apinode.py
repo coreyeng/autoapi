@@ -34,7 +34,7 @@ if __name__ == '__main__':
     for node, leaves in m.walk():
         print(
             '{} node has leaves: {}'.format(
-                node.name, ', '.join([l.name for l in leaves])
+                node.name, ', '.join([leaf.name for leaf in leaves])
             )
         )
 

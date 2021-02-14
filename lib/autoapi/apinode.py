@@ -76,10 +76,12 @@ from pkgutil import iter_modules
 from traceback import format_exc
 from importlib import import_module
 from collections import OrderedDict
-from inspect import isclass, isfunction, ismodule, isbuiltin, isroutine, getmembers
+from inspect import isclass, isfunction, ismodule, isbuiltin, isroutine, \
+    getmembers
 
 
 log = getLogger(__name__)
+
 
 class APINode(object):
     """
@@ -220,22 +222,22 @@ class APINode(object):
         # Like autodoc's setting though:
         #  if the module has a public API, give that priority
         if (not (
-                hasattr(self.module, '__api__')
-                or hasattr(self.module, '__all__')
-            ) and self.context['module-members']):
+            hasattr(self.module, '__api__')
+            or hasattr(self.module, '__all__')
+        ) and self.context['module-members']):
 
             # Start with all members and gradually shrink the set down
             # with the given options
             keys = getmembers(self.module)
-            if not 'undoc-members' in self.context['module-members']:
+            if 'undoc-members' not in self.context['module-members']:
                 # Remove undocumented items
                 keys = self.filter_out_nodoc(keys)
-            if not 'private-members' in self.context['module-members']:
+            if 'private-members' not in self.context['module-members']:
                 # Remove private members
                 # Private members are defined as starting with
                 # '_' or '__', but no trailing '__'
                 keys = self.filter_out_private(keys)
-            if not 'special-members' in self.context['module-members']:
+            if 'special-members' not in self.context['module-members']:
                 # Remove special members.
                 # Special members are defined as starting or ending with, '__'
                 keys = self.filter_out_special(keys)
@@ -260,9 +262,12 @@ class APINode(object):
 
         # Categorize objects
         for obj_name, obj in public.items():
-            if obj_name in context['exclude-members']:
+            if (
+                'exclude-members' in context
+                and obj_name in context['exclude-members']
+            ):
                 continue
-            
+
             if isclass(obj):
                 if issubclass(obj, Exception):
                     self.exceptions[obj_name] = (
@@ -289,8 +294,9 @@ class APINode(object):
         # For self._relevant, None means undertermined
         if self.is_root():
             self.is_relevant()
-        
-        context['app'].emit(self.autoapi_process_node_func_name, self)
+
+        if 'app' in context:
+            context['app'].emit(self.autoapi_process_node_func_name, self)
 
     def has_public_api(self):
         """
@@ -435,6 +441,11 @@ class APINode(object):
         return '\n'.join(output)
 
     def is_prebuilt(self):
+        """
+            Indicates if the current node is derived from a
+            ``prebuilt library`` by checking for ``.pyd`` or
+            ``.so`` in the modules ``__file__`` attribute.
+        """
         if hasattr(self.module, '__file__'):
             f = getattr(self.module, '__file__')
             if f.endswith('.pyd') or f.endswith('.so'):
@@ -446,29 +457,29 @@ class APINode(object):
             lambda m: not hasattr(m[1], '__doc__'),
             members)
         )
-    
+
     def filter_out_private(self, members):
         return list(filter(
             lambda m: (not ((str(m[0]).startswith('__')
-                and not str(m[0]).endswith('__'))
-                or str(m[0]).startswith('_'))
-            ),
+                             and not str(m[0]).endswith('__'))
+                            or str(m[0]).startswith('_'))
+                       ),
             members)
         )
-    
+
     def filter_out_special(self, members):
         return list(filter(
             lambda m: (not (str(m[0]).startswith('__')
-                or str(m[0]).endswith('__'))
-            ),
+                            or str(m[0]).endswith('__'))
+                       ),
             members)
         )
 
     def filter_out_external(self, members):
         return list(filter(
             lambda m: (hasattr(m[1], '__module__')
-                and m[1].__module__ == self.module.__name__
-            ),
+                       and m[1].__module__ == self.module.__name__
+                       ),
             members)
         )
 

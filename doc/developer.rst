@@ -26,6 +26,13 @@ Setup Development Environment
       git config flake8.strict true
 
 
+#. Install Other Requirements
+
+   ::
+
+      # For inheritance diagram
+      sudo apt-get install graphviz
+
 Building Documentation
 ======================
 
@@ -52,4 +59,4 @@ Running Test Suite
 
 ::
 
-   tox -e py27,py34
+   tox -e test
