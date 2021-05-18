@@ -2,6 +2,8 @@
 autoapi
 =======
 
+This is a forked version of the original `AutoAPI <https://pypi.org/project/autoapi/>`_, released under the same licensing, with updates specifically for the `Origen project <https://origen-sdk.org/>`_. The original source is available on its `Github <https://github.com/carlos-jenkins/autoapi>`_ project.
+
 Automatic Python API reference documentation generator for Sphinx, inspired by
 Doxygen.
 

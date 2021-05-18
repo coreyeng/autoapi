@@ -13,6 +13,8 @@ AutoAPI
 
    .. image:: _static/images/logo.png
 
+This is a forked version of the original `AutoAPI <https://pypi.org/project/autoapi/>`_, released under the same licensing, with updates specifically for the `Origen project <https://origen-sdk.org/>`_. The original source is available on its `Github <https://github.com/carlos-jenkins/autoapi>`_ project.
+
 Automatic Python API reference documentation generator for Sphinx, inspired by
 Doxygen.
 
@@ -272,7 +274,7 @@ License
 
 .. code-block:: text
 
-   Copyright (C) 2015-2020 KuraLabs S.R.L
+   Copyright (C) 2015-2021 KuraLabs S.R.L, Origen-SDK
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -294,6 +296,8 @@ License
 .. _autosummary_generate: http://sphinx-doc.org/latest/ext/autosummary.html#generating-stub-pages-automatically
 .. _Tox: https://tox.readthedocs.org/
 .. _default template: https://raw.githubusercontent.com/carlos-jenkins/autoapi/master/lib/autoapi/templates/autoapi/module.rst
-.. _Project GitHub: https://github.com/carlos-jenkins/autoapi
-.. _Project PyPI: https://pypi.python.org/pypi/autoapi/
+.. _Project GitHub: https://github.com/coreyeng/autoapi
+.. _Project PyPI: https://pypi.python.org/pypi/origen_autoapi/
+.. _Original Source GitHub: https://github.com/carlos-jenkins/autoapi
+.. _Original PyPI: https://pypi.python.org/pypi/autoapi/
 .. _Jinja2: http://jinja.pocoo.org/

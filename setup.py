@@ -58,7 +58,7 @@ def find_requirements(filename):
 
 
 setup(
-    name='autoapi',
+    name='origen-autoapi',
     version=find_version('lib/autoapi/__init__.py'),
     package_dir={'': 'lib'},
     packages=find_packages('lib'),
@@ -68,14 +68,13 @@ setup(
     install_requires=find_requirements('requirements.txt'),
 
     # Metadata
-    author='KuraLabs S.R.L',
-    author_email='info@kuralabs.io',
+    author='KuraLabs S.R.L, Origen-SDK',
     description=(
         'Automatic API reference documentation generation for Sphinx inspired '
-        'by Doxygen'
+        'by Doxygen, with changes for the Origen project.'
     ),
     long_description=read('README.rst'),
-    url='https://autoapi.readthedocs.org/',
+    url='https://origen_autoapi.readthedocs.org/',
     keywords='autoapi',
 
     classifiers=[

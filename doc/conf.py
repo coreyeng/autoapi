@@ -44,8 +44,8 @@ source_suffix = ['.rst']
 master_doc = 'index'
 
 # General information about the project.
-project = 'AutoAPI'
-author = 'KuraLabs S.R.L'
+project = 'AutoAPI, Origen-SDK'
+author = 'KuraLabs S.R.L, Origen-SDK'
 years = '2015-{}'.format(date.today().year)
 copyright = '{}, {}'.format(years, author)
 
