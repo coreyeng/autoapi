@@ -58,7 +58,7 @@ def find_requirements(filename):
 
 
 setup(
-    name='origen-autoapi',
+    name='origen_autoapi',
     version=find_version('lib/autoapi/__init__.py'),
     package_dir={'': 'lib'},
     packages=find_packages('lib'),
@@ -75,7 +75,7 @@ setup(
     ),
     long_description=read('README.rst'),
     url='https://origen_autoapi.readthedocs.org/',
-    keywords='autoapi',
+    keywords='autoapi, origen',
 
     classifiers=[
         'Development Status :: 5 - Production/Stable',

@@ -5,20 +5,24 @@
    autoapi/autoapi
    autoapi/documented
 
-=======
-AutoAPI
-=======
+==============
+Origen-AutoAPI
+==============
 
 .. container:: float-right
 
    .. image:: _static/images/logo.png
 
-This is a forked version of the original `AutoAPI <https://pypi.org/project/autoapi/>`_, released under the same licensing, with updates specifically for the `Origen project <https://origen-sdk.org/>`_. The original source is available on its `Github <https://github.com/carlos-jenkins/autoapi>`_ project.
+.. note::
+   This is a forked version of the original `AutoAPI <https://pypi.org/project/autoapi/>`_, released under the same licensing, with updates specifically for the `Origen project <https://origen-sdk.org/>`_. The original source is available on its `Github <https://github.com/carlos-jenkins/autoapi>`_ project.
+
+.. warning::
+   As this is a re-release, many of the configuration values remain the same as the original. It is not advised to use this in parallel to the `original package <https://pypi.python.org/pypi/autoapi/>`_.
 
 Automatic Python API reference documentation generator for Sphinx, inspired by
 Doxygen.
 
-AutoAPI is a Sphinx_ extension that allows to automatically generate
+``Origen-AutoAPI`` (just ``AutoAPI`` going forward) is a Sphinx_ extension to automatically generate
 API reference documentation for Python packages
 (:doc:`example <autoapi/documented>`), recursively, without any intervention
 from the developer. It will discover all the package modules and their public
@@ -35,7 +39,7 @@ Usage
 
    .. code-block:: sh
 
-      pip install autoapi
+      pip install origen_autoapi
 
    Or if using Virtualenv_ or Tox_ (and you should) add it to your
    *requirements.txt* (or *requirements.dev.txt* if you want to separate
@@ -43,14 +47,14 @@ Usage
 
 #. Add AutoAPI to your extensions:
 
-   In your Sphinx_ ``conf.py`` configuration file add ``autoapi.sphinx``:
+   In your Sphinx_ ``conf.py`` configuration file add ``origen_autoapi.sphinx``:
 
    .. code-block:: python
 
       extensions = [
           'sphinx.ext.autodoc',
           'sphinx.ext.inheritance_diagram',
-          'autoapi.sphinx'
+          'origen_autoapi.sphinx'
       ]
 
    Make sure to have ``autodoc`` and ``inheritance_diagram`` too because the
