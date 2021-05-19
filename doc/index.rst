@@ -299,7 +299,7 @@ License
 .. _autodoc: http://sphinx-doc.org/ext/autodoc.html
 .. _autosummary_generate: http://sphinx-doc.org/latest/ext/autosummary.html#generating-stub-pages-automatically
 .. _Tox: https://tox.readthedocs.org/
-.. _default template: https://raw.githubusercontent.com/carlos-jenkins/autoapi/master/lib/autoapi/templates/autoapi/module.rst
+.. _default template: https://raw.githubusercontent.com/coreyeng/autoapi/master/lib/origen_autoapi/templates/autoapi/module.rst
 .. _Project GitHub: https://github.com/coreyeng/autoapi
 .. _Project PyPI: https://pypi.python.org/pypi/origen_autoapi/
 .. _Original Source GitHub: https://github.com/carlos-jenkins/autoapi
