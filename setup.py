@@ -62,7 +62,7 @@ setup(
     version=find_version('lib/origen_autoapi/__init__.py'),
     package_dir={'': 'lib'},
     packages=find_packages('lib'),
-    package_data={'origen_autoapi': ['templates/origen_autoapi/*.rst']},
+    package_data={'origen_autoapi': ['templates/autoapi/*.rst']},
 
     # Dependencies
     install_requires=find_requirements('requirements.txt'),
