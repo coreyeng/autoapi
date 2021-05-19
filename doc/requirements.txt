@@ -3,6 +3,6 @@
 #   This requirements are Python packages that need to be installed in order
 #   to successfully generate the project's documentation.
 
-sphinx
+sphinx==3.4.3
 plantweb
 sphinx-readable-theme
