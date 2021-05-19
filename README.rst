@@ -1,6 +1,6 @@
-=======
+==============
 origen_autoapi
-=======
+==============
 
 Note
 ====
@@ -26,7 +26,7 @@ objects and document them.
 Documentation
 =============
 
-    https://autoapi.readthedocs.io/
+    https://origen_autoapi.readthedocs.io/
 
 
 License
