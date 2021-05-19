@@ -18,6 +18,7 @@ from sphinx_readable_theme import get_html_theme_path
 
 # Allow to find the 'documented.py' example
 path.insert(0, str(Path(__file__).resolve().parent))
+path.insert(0, str(Path(__file__).resolve().parent.parent.joinpath("lib")))
 
 # -- General configuration ------------------------------------------------
 
