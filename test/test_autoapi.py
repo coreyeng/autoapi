@@ -23,7 +23,7 @@ See http://pythontesting.net/framework/pytest/pytest-introduction/#fixtures
 
 import pytest  # noqa
 
-from autoapi import __version__
+from origen_autoapi import __version__
 
 
 def test_semantic_version():

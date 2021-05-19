@@ -59,10 +59,10 @@ def find_requirements(filename):
 
 setup(
     name='origen_autoapi',
-    version=find_version('lib/autoapi/__init__.py'),
+    version=find_version('lib/origen_autoapi/__init__.py'),
     package_dir={'': 'lib'},
     packages=find_packages('lib'),
-    package_data={'autoapi': ['templates/autoapi/*.rst']},
+    package_data={'origen_autoapi': ['templates/origen_autoapi/*.rst']},
 
     # Dependencies
     install_requires=find_requirements('requirements.txt'),

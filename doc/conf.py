@@ -9,7 +9,7 @@ from sys import path
 from pathlib import Path
 from datetime import date
 
-from autoapi import __version__
+from origen_autoapi import __version__
 from sphinx_readable_theme import get_html_theme_path
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -28,7 +28,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.intersphinx',
-    'autoapi.sphinx',
+    'origen_autoapi.sphinx',
     'plantweb.directive',
 ]
 

@@ -23,22 +23,22 @@ See http://pythontesting.net/framework/pytest/pytest-introduction/#fixtures
 
 import pytest  # noqa
 
-from autoapi import APINode
+from origen_autoapi import APINode
 
 
 def test_autotree():
     """
     Check that the APINode tree is consistent with a known package.
     """
-    tree = APINode('autoapi')
+    tree = APINode('origen_autoapi')
 
     assert tree.is_root()
     assert tree.depth() == 1
     assert len(tree.directory) == 3
     assert tree.is_relevant()
     assert tree.has_public_api()
-    assert tree.get_module('autoapi.apinode') is not None
-    assert not tree.get_module('autoapi.apinode').is_relevant()
+    assert tree.get_module('origen_autoapi.apinode') is not None
+    assert not tree.get_module('origen_autoapi.apinode').is_relevant()
     assert tree.tree()
     assert tree.tree(fullname=False)
     assert repr(tree)
