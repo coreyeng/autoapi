@@ -12,6 +12,7 @@ doc/_build/*
 
 # Sphinx autoapi
 doc/autoapi/*
+doc/origen_autoapi/*
 
 # Tox
 .tox/*

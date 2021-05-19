@@ -90,7 +90,7 @@ def setup(app):
 
 # AutoAPI configuration
 autoapi_modules = {
-    'autoapi': {'prune': True},
+    'origen_autoapi': {'prune': True},
     'documented': {'output': 'autoapi'}
 }
 

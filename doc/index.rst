@@ -2,7 +2,7 @@
    :hidden:
 
    developer
-   autoapi/autoapi
+   origen_autoapi/origen_autoapi
    autoapi/documented
 
 ==============
@@ -264,7 +264,7 @@ Contributing
 ============
 
 - :doc:`Developer Guide. <developer>`
-- :doc:`Internal Documentation Reference. <autoapi/autoapi>`
+- :doc:`Internal Documentation Reference. <origen_autoapi/origen_autoapi>`
 
 
 Development
